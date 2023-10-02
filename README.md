@@ -1,1 +1,2 @@
 # digipick
+Starfield Digipick Solver

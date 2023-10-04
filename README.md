@@ -10,9 +10,10 @@ Just be carefull to keep the cursor away from tne places on the screen I'm looki
 
 solveLock2() was an attempt to speed up the original solver and it did decrease the number of recursive calls, but it was a disappointment in the reduction of runtime.
 
-
+```
  solveLock2(0)
  n: 6941, 102.2 ms, lock,[pins]: [1,[3,4,10,14],ø,ø,0,[1,7,8,14], ...
 
   solveLock(0, 0)
  n: 102522, 110.7 ms, lock,[pins]: [1,[3,4,10,14],ø,ø,0,[1,7,8,14], ...
+```

@@ -8,7 +8,7 @@ Just be carefull to keep the cursor away from tne places on the screen I'm looki
 
 **note:** In the solved-master-lock.jpg, `n` is the number of recursive calls to `solveLock` and elapse runtime is in `ms`.
 
-solveLock2() was an attempt to speed up the original solver and it did decrease the number of recursive calls, but it was a disapointment in the reduction of runtime.
+solveLock2() was an attempt to speed up the original solver and it did decrease the number of recursive calls, but it was a disappointment in the reduction of runtime.
 
 
  solveLock2(0)

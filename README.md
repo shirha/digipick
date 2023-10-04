@@ -10,7 +10,7 @@ Just be carefull to keep the cursor away from tne places on the screen I'm looki
 
 `solveLock2()` was an attempt to speed up the original `solveLock()` and it did decrease the number of recursive calls, but it was a disappointment in the reduction of runtime. You get the old solver by clicking the checkbox. 
 
-Also, if you \[Choose file\] and it's the same file, nothing get triggered. Default browser behaviour <sub><sup>☹️</sup></sub>
+Also, if you \[`Choose file\`] and it's the same file, nothing get triggered. Default browser behaviour <sub><sup>☹️</sup></sub>
 
 ```
 solveLock2()

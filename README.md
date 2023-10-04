@@ -6,9 +6,9 @@ Here is my 'Starfield Digipick Solver'. It's working on my 1920 x 1080 fullscree
 Just be carefull to keep the cursor away from tne places on the screen I'm looking at, like around the digipicks keys and the lock empty slots. I put mine in the center of the lock or the edges.
 
 
-**note:** In the solved-master-lock.jpg, `n` is the number of recursive calls to `solveLock` and elapse runtime is in `ms`.
+**note:** In the solved-master-lock.jpg, `n` is the number of recursive calls to `solveLock()` and elapse runtime is in `ms`.
 
-solveLock2() was an attempt to speed up the original solver and it did decrease the number of recursive calls, but it was a disappointment in the reduction of runtime.
+`solveLock2()` was an attempt to speed up the original `solveLock()` and it did decrease the number of recursive calls, but it was a disappointment in the reduction of runtime.
 
 ```
 solveLock2(0)

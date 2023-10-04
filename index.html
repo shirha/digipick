@@ -9,17 +9,18 @@
   <title>Starfield Digipick Solver</title>
 <style>
   @font-face {
-    font-family: " Garamond"; 
+    font-family: Lora; 
     src: url("Lora-Regular.ttf");}
   body::-webkit-scrollbar {display: none;}
-  body {overflow-y: scroll; margin: 0}
+  body {overflow-y: scroll; margin: 0; background: url("screenshot.jpg");}
   input[type="file"]::file-selector-button {border-radius: 4px; border-width: 1px;}
-  * {font-family: Lora; font-size: 18px; color: yellow;}
+  * {font-family: Garamond; font-size: 18px; color: yellow;}
   #container {position: relative;}
   #menu {position: absolute; top: 50px; left: 50px; padding: 10px;}
   .black-text { color: black;}
   .yellow-text { color: yellow;}
   span {color: #e1390c; background-color: black; padding: 1px 10px; font-weight: bold; border-radius: 4px;}
+  #routine {margin-left: 180px; accent-color: white;}
   br:before { content: "\A"; white-space: pre-line }
 </style>
 </head>
@@ -27,6 +28,7 @@
   <div id="container">
     <div id="menu">
       <input type="file" id="imageInput" class="black-text" accept="image/*">
+      <input type="checkbox" id="routine">
       <p id="sumResult"></p>
       <img id="warning" src="warning.jpg">
     </div>
@@ -37,18 +39,22 @@ const canvas = document.getElementById('myCanvas');
 const context = canvas.getContext('2d');
 const imageInput = document.getElementById('imageInput');
 const sumResult = document.getElementById('sumResult');
+const routine = document.getElementById('routine');
+
 
 // Add an event listener to the input element to load the image
 // Function to load and draw an image onto the canvas
 imageInput.addEventListener('change', function (event) {
   const file = event.target.files[0];
   if (file) {
+
+    // Clear the canvas
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
     const reader = new FileReader();
     reader.onload = function(e) {
       const img = new Image();
       img.onload = function() {
-        // Clear the canvas
-        context.clearRect(0, 0, canvas.width, canvas.height);
         
         // Draw the image onto the canvas
         context.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -124,9 +130,9 @@ function analyze(x, y, r, context, fn) {
   return results;
 }
 
-let lockRings, pickRings, solution, count = 0;
+let lockRings, pickRings, pickEntrys, solution, count; // global
 function initLockData() {
-  lockRings = [], pickRings = [], solution = [];
+  lockRings = [], pickRings = [], pickEntrys = [], solution = [], count = 0;
 
   const radius = 40,
     solutionX = 148,
@@ -183,15 +189,48 @@ function initLockData() {
   lockSums.forEach(ring => lockRings.push(ring.key));
   lockRings.length = {0:0, 4:2, 6:2, 9:3, 12:4}[pickRings.length];
 
-  console.log('\npick=',JSON.stringify(pickRings));
+  console.log('\n pick=',JSON.stringify(pickRings));
   console.log('lock=',JSON.stringify(lockRings));
 
+  // Start the timer
+  let startTime = performance.now();
+
   // throw ""
-  try {
-    solveLock(0, 0);
-  } catch(err){
-    console.log(err);
+  if(routine.checked == true)  {
+
+    try {
+      solveLock(0, 0);
+    } catch(err){
+      console.log(err);
+    }
+
+  }else{
+
+    pickEntrys = [...new Array(pickRings.length)].map(() => []);
+    for(let pick = 0; pick < pickRings.length; pick++){
+      const currentPickRing = pickRings[pick];
+      for(let lock = 0; lock < lockRings.length; lock++){
+        for(let rotate = 0; rotate < 16; rotate++){
+          const currentLockRing = lockRings[lock];
+          const rotatePickRing  = currentPickRing.map(key => (key + rotate) % 16);
+          if(rotatePickRing.length && rotatePickRing.every(key => currentLockRing.includes(key))){
+            pickEntrys[pick].push({lock, pick, rotate, key: rotatePickRing});
+    } } } }
+
+    console.log('\npickEntrys:',JSON.stringify(pickEntrys.map(e => e.length)));
+    for(let i = 0; i < pickEntrys.length; i++){
+      console.log(`  ${JSON.stringify(pickEntrys[i])},`);
+    }
+
+    try {
+      solveLock2(0);
+    } catch(err){
+      console.log(err);
+    }
   }
+
+  let elapsed = (performance.now() - startTime).toFixed(1);
+  console.log(`solveLock took ${elapsed} milliseconds`);
 
   console.log(`\ncount: ${count}\nsolution: `);
   for(let i = 0; i < solution.length; i++){
@@ -216,14 +255,50 @@ function initLockData() {
       result.push('ø');
     }
   });
-  console.log(result);
+
   if(!result.every(e => e == 'ø'))
-    sumResult.innerHTML += `lock,[pins]: ${JSON.stringify(result).replace(/"/g,'')}`;
+    sumResult.innerHTML += `n: ${count}, ${elapsed} ms, lock,[pins]: ${JSON.stringify(result).replace(/"/g,'')}`;
 
   pts = pointsBox(solutionX, centerY, offset);
   pts.length = pickRings.length;
   pts.forEach((pt, pick) => 
     drawCircles(pt.x, pt.y, radius, context, digiPicks, pick));
+
+  // console.log(JSON.stringify(pickEntrys.map(e => e.length)));
+  // console.log(JSON.stringify(pickEntrys, null, 2));
+}
+
+function solveLock2(pickIndex) { count++;
+  const currentPickEntry = pickEntrys[pickIndex];
+
+  for (let i = 0; i < currentPickEntry.length; i++) {
+    const entry = currentPickEntry[i];
+    const currentLockRing = lockRings[entry.lock];
+
+    if(entry.key.every(key => currentLockRing.includes(key))){
+      lockRings[entry.lock] = currentLockRing.filter(slot => !entry.key.includes(slot));
+
+      console.log(` Used pick ${pickIndex} rotate ${entry.rotate} to unlock ring ${entry.lock} with keys ${entry.key} lock ${JSON.stringify(lockRings)}`);
+      solution.push(entry);
+
+      if(lockRings.every(ring => ring.length === 0)){
+        console.log(JSON.stringify({solution}));
+        throw `Lock open!`;
+      }
+
+      if(pickIndex + 1 < pickEntrys.length){
+        solveLock2(pickIndex + 1);
+      }
+      // Undo the pick to try other combinations
+      lockRings[entry.lock] = lockRings[entry.lock].concat(entry.key);
+
+      console.log(`*Undo pick ${pickIndex} rotate ${entry.rotate} to unlock ring ${entry.lock} with keys ${entry.key} lock ${JSON.stringify(lockRings)}`);
+      solution.pop();
+    }
+  }
+  if(pickIndex + 1 < pickEntrys.length){
+    solveLock2(pickIndex + 1);
+  }
 }
 
 function solveLock(pickIndex, rotateIndex) { count++;
@@ -238,10 +313,10 @@ function solveLock(pickIndex, rotateIndex) { count++;
       lockRings[i] = currentLockRing.filter(key => !rotatePickRing.includes(key));
 
       console.log(` Used pick ${pickIndex} rotate ${rotateIndex} to unlock ring ${i} with keys ${rotatePickRing} lock ${JSON.stringify(lockRings)}`);
-      solution.push({lock:i, pick:pickIndex, key:rotatePickRing});
+      solution.push({lock:i, pick:pickIndex, rotate:rotateIndex, key:rotatePickRing});
 
       if(lockRings.every(ring => ring.length === 0)){
-        // console.log(JSON.stringify({solution}));
+        console.log(JSON.stringify({solution}));
         throw `Lock open!`;
       }
 

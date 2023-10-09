@@ -13,21 +13,25 @@
     src: url("Lora-Regular.ttf");}
   body::-webkit-scrollbar {display: none;}
   body {overflow-y: scroll; margin: 0; background: url("screenshot.jpg");}
-  input[type="file"]::file-selector-button {border-radius: 4px; border-width: 1px;}
+  input[type="file"]::file-selector-button {border-radius: 4px; border-width: 1px; margin-left: 10px;}
   * {font-family: Lora; font-size: 18px; color: yellow;}
   #container {position: relative;}
-  #menu {position: absolute; top: 50px; left: 50px; padding: 10px;}
+  #menu {position: absolute; top: 50px; left: 50px; padding: 10px; background-color: black; border-radius: 4px;}
   .black-text { color: black;}
   .yellow-text { color: yellow;}
-  span {color: #e1390c; background-color: black; padding: 1px 10px; font-weight: bold; border-radius: 4px;}
+  #w {color: #e1390c; padding: 1px 10px; font-weight: bold; border-radius: 4px; background-color: black;}
+  #l * {color: #34ff66; font-weight: bold; /*border-radius: 4px; background-color: black; padding: 1px 10px;*/}
   #routine {margin-left: 180px; accent-color: white; display: none;}
   br:before { content: "\A"; white-space: pre-line }
+  input[type="button"] {display: none;}
 </style>
 </head>
 <body onload="setTimeout( () => { window.scrollTo(0, 0) }, 100)">
   <div id="container">
     <div id="menu">
-      <input type="file" id="imageInput" class="black-text" accept="image/*">
+      <label id="label"><span id=l><b>New<i>!</i></b></span>&nbsp; Paste image (shift-insert)</label>
+      <input type="button" id="imagePaste" value="Paste Clipboard" />
+      <input type="file" id="imageInput" accept="image/*">
       <input type="checkbox" id="routine">
       <p id="sumResult"></p>
       <img id="warning" src="warning2.jpg">
@@ -37,9 +41,43 @@
 <script>
 const canvas = document.getElementById('myCanvas');
 const context = canvas.getContext('2d');
+const imagePaste = document.getElementById('imagePaste');
 const imageInput = document.getElementById('imageInput');
 const sumResult = document.getElementById('sumResult');
 const routine = document.getElementById('routine');
+
+// https://www.techiedelight.com/paste-image-from-clipboard-using-javascript/ 
+document.onpaste = function(pasteEvent) {
+  imageInput.value = '';
+  
+  // consider the first item (can be easily extended for multiple items)
+  const item = pasteEvent.clipboardData.items[0]; // DataTransferItem
+
+  if (item.type.indexOf("image") === 0) {
+    const blob = item.getAsFile();
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        
+        // Draw the image onto the canvas
+        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // init
+        sumResult.innerHTML  = '&nbsp;';
+        imageInput.classList.add('yellow-text');
+        document.getElementById('warning').style.display = 'none';
+        initLockData();
+
+      };
+      img.src = e.target.result;
+      // document.getElementById("container").src = event.target.result;
+    };
+    reader.readAsDataURL(blob);
+  }
+
+}
 
 
 // Add an event listener to the input element to load the image
@@ -195,7 +233,7 @@ function initLockData() {
   if(warning[0] < 10){
     const gap = findLargestDifference(totalPct.sort((a, b) => a-b));
     sumResult.innerHTML = `gap: ${gap}, cir: ${warning[0]}, digi: ${warning[1]} ` +
-      `<br><br><span>WARNING: Lock not found!</span><br><br>`;
+      `<br><br><span id=w>WARNING: Lock not found!</span><br><br>`;
   }
 
   console.log('\nlockSums:');

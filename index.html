@@ -49,7 +49,7 @@ const routine = document.getElementById('routine');
 // https://www.techiedelight.com/paste-image-from-clipboard-using-javascript/ 
 document.onpaste = function(pasteEvent) {
   imageInput.value = '';
-  
+
   // consider the first item (can be easily extended for multiple items)
   const item = pasteEvent.clipboardData.items[0]; // DataTransferItem
 
@@ -332,7 +332,9 @@ function initLockData() {
   });
 
   if(!result.every(e => e == 'ø'))
-    sumResult.innerHTML += `n: ${count}, ${elapsed} ms, lock,[pins]: ${JSON.stringify(result).replace(/"/g,'')}`;
+    sumResult.innerHTML += `n: ${count}, ${elapsed} ms, lock,[pins]: ${
+      JSON.stringify(result).replace(/"/g,'').replace(/^\[(.+)\]$/,"$1")
+    }`;
 
   pts = pointsBox(solutionX, centerY, offset);
   pts.length = pickRings.length;

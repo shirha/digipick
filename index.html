@@ -13,7 +13,7 @@
     src: url("Lora-Regular.ttf");}
   body::-webkit-scrollbar {display: none;}
   body {overflow-y: scroll; margin: 0; background: url("screenshot.jpg");}
-  input[type="file"]::file-selector-button {border-radius: 4px; border-width: 1px; margin-left: 10px;}
+  input[type="file"]::file-selector-button {border-radius: 4px; border-width: 1px; /*margin-left: 10px;*/}
   * {font-family: Lora; font-size: 18px; color: yellow;}
   #container {position: relative;}
   #menu {position: absolute; top: 50px; left: 50px; padding: 10px; background-color: black; border-radius: 4px;}
@@ -29,9 +29,9 @@
 <body onload="setTimeout( () => { window.scrollTo(0, 0) }, 100)">
   <div id="container">
     <div id="menu">
-      <label id="label"><span id=l><b>New<i>!</i></b></span>&nbsp; Paste image (shift-insert)</label>
       <input type="button" id="imagePaste" value="Paste Clipboard" />
-      <input type="file" id="imageInput" accept="image/*">
+      <input type="file" id="imageInput" accept="image/*"><br>
+      <label id="label"><span id=l><b>New<i>!</i></b></span>&nbsp; Paste image (Ctrl-V or Shift-Insert)</label>
       <input type="checkbox" id="routine">
       <p id="sumResult"></p>
       <img id="warning" src="warning2.jpg">

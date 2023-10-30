@@ -1,10 +1,11 @@
 # digipick
 **Starfield Digipick Solver**
 
-Here is my 'Starfield Digipick Solver'. It's working on my 1920 x 1080 fullscreen shots but it should work on anything at 16:9 ratio. Just take a screenshot in game (no borders) then click 'Choose file'. **New!** Now you can just paste the image (shift-enter) after a screenshot.
+Here is my 'Starfield Digipick Solver'. It's working on my 1920 x 1080 fullscreen shots but it should work on anything at 16:9 ratio. Just take a screenshot in game (no borders) then click 'Choose file'. **New!** Now you can just paste the image (Ctrl-V or Shift-Insert) after a screenshot.
 
 Just be carefull to keep the cursor away from tne places on the screen I'm looking at, like around the digipicks keys and the lock empty slots. I put mine in the center of the lock or the edges. See warning2.jpg
 
+**IMPORTANT** 99% of the puzzles are are solved in less than a secound but I have come across one that took almost a minute!
 
 **note:** In the solved-master-lock.jpg, `n` is the number of recursive calls to `solveLock2()` and elapse runtime is in `ms`.
 

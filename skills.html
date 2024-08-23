@@ -215,21 +215,21 @@ function pageload(){
       localStorage.setItem(key, value);
     }
   }
-}
 
-for (let i = 0; i < localStorage.length; i++) {
-  const key = localStorage.key(i);
-  const mat = key.match(regex);
-  if(mat){
-    levels.add(parseInt(mat[1]));
-    console.log(`Key: ${key}, Value: ${localStorage.getItem(key)}`);
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    const mat = key.match(regex);
+    if(mat){
+      levels.add(parseInt(mat[1]));
+      console.log(`Key: ${key}, Value: ${localStorage.getItem(key)}`);
+    }
   }
-}
 
-if(levels.size){
-  let keys = Array.from(levels.keys()).sort((a, b) => a - b);
-  let value = JSON.parse(localStorage.getItem(`skills_${keys[index]}`));
-  check(value);
-  id.textContent = keys[index];
+  if(levels.size){
+    let keys = Array.from(levels.keys()).sort((a, b) => a - b);
+    let value = JSON.parse(localStorage.getItem(`skills_${keys[index]}`));
+    check(value);
+    id.textContent = keys[index];
+  }
 }
 </script></body></head></html>

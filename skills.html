@@ -145,12 +145,14 @@ function toggle(argv) {
     }
 
     if(e.target.parentElement.id === "delete" && levels.size){
-      localStorage.removeItem(`skills_${id.textContent}`);
-      levels.delete(parseInt(id.textContent));
-      console.log(levels);
-      index--;
-      id.className = "level keyerror";
-      console.log(`Key removed: ${id.textContent}`);
+      if(confirm('Are you sure?')){
+        localStorage.removeItem(`skills_${id.textContent}`);
+        levels.delete(parseInt(id.textContent));
+        console.log(levels);
+        index--;
+        id.className = "level keyerror";
+        console.log(`Key removed: ${id.textContent}`);
+      }
     }
 
     if(e.target.id === "next"){

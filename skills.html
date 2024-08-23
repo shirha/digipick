@@ -112,15 +112,6 @@ function toggle(argv) {
 }
 document.getElementById("toggle").onclick = toggle;
 
-for (let i = 0; i < localStorage.length; i++) {
-  const key = localStorage.key(i);
-  const mat = key.match(regex);
-  if(mat){
-    levels.add(parseInt(mat[1]));
-    console.log(`Key: ${key}, Value: ${localStorage.getItem(key)}`);
-  }
-}
-
 [...document.querySelectorAll(".level")]
   .forEach(e => e.onclick = function(e) {
 
@@ -180,14 +171,6 @@ for (let i = 0; i < localStorage.length; i++) {
     }
   });
 
-if(levels.size){
-  let keys = Array.from(levels.keys()).sort((a, b) => a - b);
-  let value = JSON.parse(localStorage.getItem(`skills_${keys[index]}`));
-  check(value);
-  id.textContent = keys[index];
-}
-
-
 function check(value){
   const db = {"grand": 0};
   [...document.querySelectorAll(".rank")]
@@ -212,13 +195,13 @@ function check(value){
   console.log(db);
   return db;
 }
-// check();
 
 var jack = {
   "skills_23":"[1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,2,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,2,1,1,0,0,1,1,0,0,0,2,0,0,0,0]",
   "skills_41":"[0,0,2,1,0,0,0,0,0,0,0,0,0,0,0,0,2,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1,1,0,1,1,1,0,3,4,0,0,0,0,0,0,0,1,1,4,3,1,0,0,1,1,0,0,0,4,0,1,0,0]",
   "skills_66":"[0,0,4,1,0,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,0,0,0,0,1,0,0,1,1,1,0,0,4,0,0,0,2,0,0,0,0,2,0,1,1,0,1,0,1,1,1,0,1,1,1,0,3,4,0,0,1,1,0,1,1,2,1,4,3,1,0,0,1,2,0,2,0,4,0,2,0,0]"
 }
+
 function pageload(){
   const params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
@@ -232,5 +215,21 @@ function pageload(){
       localStorage.setItem(key, value);
     }
   }
+}
+
+for (let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  const mat = key.match(regex);
+  if(mat){
+    levels.add(parseInt(mat[1]));
+    console.log(`Key: ${key}, Value: ${localStorage.getItem(key)}`);
+  }
+}
+
+if(levels.size){
+  let keys = Array.from(levels.keys()).sort((a, b) => a - b);
+  let value = JSON.parse(localStorage.getItem(`skills_${keys[index]}`));
+  check(value);
+  id.textContent = keys[index];
 }
 </script></body></head></html>

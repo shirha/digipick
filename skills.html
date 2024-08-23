@@ -79,16 +79,12 @@ skills.forEach(e => {
       if(value === null){
         id.className = "level keyerror";
       }else{
-        let rank = Array.from(document.querySelectorAll(".rank"))
-            .map(e => parseInt(e.textContent) || 0);
-
-        if(value === JSON.stringify(rank)){
-          id.className = "level";
-        }else{
-          id.className = "level mismatch";
-        }
+        let rank  = Array.from(document.querySelectorAll(".rank"))
+          .map(e => parseInt(e.textContent) || 0);
+        id.className = value === JSON.stringify(rank)
+          ? "level" : "level mismatch";
       }
-      if(id.textContent == "0") id.className = "level";
+      if(id.textContent === "0") id.className = "level";
     };
     detailElement.appendChild(skillElement);
     sectionElement.appendChild(detailElement);

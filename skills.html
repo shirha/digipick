@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <!--link rel="manifest" href="manifest.json"-->
+  <!--link rel="shortcut icon" type="image/png" href="favicon-512.png"-->
+  <title>Starfield Skills</title>
+<style>
+  @font-face {
+    font-family: Lora; 
+    src: url("Lora-Regular.ttf");}
+  body {font-family: Lora;}
+  .rank {display: inline-block; margin: 0 1px 0 1px; width: 16px; text-align: center;}
+  button {margin: 1px 1px; border-color: #efefef;}
+  .detail button {width: 210px;}
+  .cat {font-weight: bold;}
+  .hidden {display: none;} /* Class to hide elements */
+  img {height: 12px;}
+  a img {height: 22px; transform: translateY(5px);}
+  .error {background-color: #ffcce6; border-radius: 4px;}
+  .keyerror {background-color: #ffcce6;}
+  .mismatch {background-color: #cce6ff;} /* purple #e5ccff; blue #cce6ff} */
+  .section {display: inline-block; vertical-align: top; margin-left: 10px;}
+  .level {margin-bottom: 20px;}}
+  /* https://www.w3schools.com/colors/colors_picker.asp */
+</style>
+<body onload="pageload()">
+  <button class="level" id="prev">&lt;</button>
+  <button class="level" id="key">0</button>
+  <button class="level" id="next">&gt;</button>
+  <button class="level" id="save"><img src="i/save.png"></button>
+  <button class="level" id="delete"><img src="i/trash.png"></button>
+  <button id="toggle">Rank 0</button>
+  <a type=button href='https://inara.cz/starfield/skills/' target=_blank><img src="i/link.png"></a>
+  <div id="container"></div>
+<script>
+const tiers  = ["#cce6ff","#b3ff66","#f2e6ff","#ffe699"];
+const skills = [["Physical",[["1","Boxing"],["1","Fitness"],["1","Stealth"],["1","Weight Lifting"],["1","Wellness"],["2","Energy Weapon Dissipation"],["2","Environmental Conditioning"],["2","Gymnastics"],["2","Nutrition"],["2","Pain Tolerance"],["3","Cellular Regeneration"],["3","Decontamination"],["3","Martial Arts"],["4","Concealment"],["4","Neurostrikes"],["4","Rejuvenation"]]],["Social",[["1","Commerce"],["1","Gastronomy"],["1","Persuasion"],["1","Scavenging"],["1","Theft"],["2","Deception"],["2","Diplomacy"],["2","Intimidaton"],["2","Isolation"],["2","Negotiation"],["3","Instigation"],["3","Leadership"],["3","Outpost Management"],["4","Manipulation"],["4","Ship Command"],["4","Xenosociology"]]],["Combat",[["1","Ballistics"],["1","Dueling"],["1","Lasers"],["1","Pistol Certification"],["1","Shotgun Certification"],["2","Demolitions"],["2","Heavy Weapons Certification"],["2","Incapacitation"],["2","Particle Beams"],["2","Rifle Certification"],["3","Marksmanship"],["3","Rapid Reloading"],["3","Sniper Certification"],["3","Targeting"],["4","Armor Penetration"],["4","Crippling"],["4","Sharpshooting"]]],["Science",[["1","Astrodynamics"],["1","Geology"],["1","Medicine"],["1","Research Methods"],["1","Surveying"],["2","Botany"],["2","Scanning"],["2","Spacesuit Design"],["2","Weapon Engineering"],["2","Zoology"],["3","Astrophysics"],["3","Chemistry"],["3","Outpost Engineering"],["4","Aneutronic Fusion"],["4","Planetary Habitation"],["4","Special Projects"]]],["Tech",[["1","Ballistic Weapon Systems"],["1","Boost Pack Training"],["1","Piloting"],["1","Security"],["1","Targeting Control Systems"],["2","Energy Weapon Systems"],["2","Engine Systems"],["2","Payloads"],["2","Shield Systems"],["3","Missile Weapon Systems"],["3","Particle Beam Weapon Systems"],["3","Robotics"],["3","Starship Design"],["3","Starship Engineering"],["4","Automated Weapon Systems"],["4","Boost Assault Training"],["4","EM Weapon Systems"]]]];
+const container = document.getElementById("container");
+const id     = document.getElementById("key");
+const regex  = /^skills_(\d+)$/;
+let levels   = new Set();
+let index    = 0;
+let db, total;
+
+skills.forEach(e => {
+  const [cat, a] = e;
+  // console.log(cat);
+  const sectionElement = document.createElement('div');
+  sectionElement.className = 'section';
+  const catElement = document.createElement('div');
+  catElement.className = 'cat';
+  catElement.textContent = cat;
+  sectionElement.appendChild(catElement);
+  a.forEach(s => {
+    // console.log(s);
+    const detailElement = document.createElement('div');
+    detailElement.className = 'detail';
+    const rankElement = document.createElement('div');
+    rankElement.className = 'rank';
+    rankElement.textContent = '';
+    rankElement.setAttribute('data-cat', cat);
+    rankElement.setAttribute('data-tier', s[0]);
+    detailElement.appendChild(rankElement);
+    const skillElement = document.createElement('button');
+    skillElement.textContent = s[1];
+    skillElement.style.background = tiers[s[0]-1];
+    skillElement.onclick = function(e) {
+      let sibling = e.target.previousElementSibling;
+      let currentValue = parseInt(sibling.textContent) || 0;
+      currentValue += 1;
+      currentValue = currentValue % 5;
+      sibling.textContent = currentValue === 0 ? '' : currentValue;
+      db = check();
+      id.textContent = db['grand'];
+      let value = localStorage.getItem(`skills_${id.textContent}`);
+      if(value === null){
+        id.className = "level keyerror";
+      }else{
+        let rank = Array.from(document.querySelectorAll(".rank"))
+            .map(e => parseInt(e.textContent) || 0);
+
+        if(value === JSON.stringify(rank)){
+          id.className = "level";
+        }else{
+          id.className = "level mismatch";
+        }
+      }
+      if(id.textContent == "0") id.className = "level";
+    };
+    detailElement.appendChild(skillElement);
+    sectionElement.appendChild(detailElement);
+  });
+  container.appendChild(sectionElement);
+});
+
+let flag = false;
+function toggle(argv) {
+  const details = document.querySelectorAll('.detail');
+  // console.log(argv,flag);
+  if(argv) flag = flag == true ? false : true;
+  details.forEach(detail => {
+    const rankElement = detail.querySelector('.rank');
+    if (rankElement && rankElement.textContent === '' && flag) {
+      detail.className = 'detail hidden';
+    }else{
+      detail.className = 'detail';
+    }
+  });
+}
+document.getElementById("toggle").onclick = toggle;
+
+for (let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  const mat = key.match(regex);
+  if(mat){
+    levels.add(parseInt(mat[1]));
+    console.log(`Key: ${key}, Value: ${localStorage.getItem(key)}`);
+  }
+}
+
+[...document.querySelectorAll(".level")]
+  .forEach(e => e.onclick = function(e) {
+
+    if(e.target.parentElement.id === "save" && id.textContent !== "0"){
+      let rank  = Array.from(document.querySelectorAll(".rank"))
+        .map(e => parseInt(e.textContent) || 0);
+      let key   = rank.reduce((t, i) => t + i);
+      let value = JSON.stringify(rank);
+      localStorage.setItem(`skills_${key}`, value);
+      levels.add(key);
+      id.textContent = key;
+      id.className = "level";
+      let keys = Array.from(levels.keys()).sort((a, b) => a - b);
+      index = keys.indexOf(key);
+      console.log(`Key: ${key}, Value: ${value}`);
+    }
+
+    if(e.target.parentElement.id === "delete" && levels.size){
+      localStorage.removeItem(`skills_${id.textContent}`);
+      levels.delete(parseInt(id.textContent));
+      console.log(levels);
+      index--;
+      id.className = "level keyerror";
+      console.log(`Key removed: ${id.textContent}`);
+    }
+
+    if(e.target.id === "next"){
+      if(levels.size){
+        index = (levels.size + index + 1) % levels.size;
+        let keys = Array.from(levels.keys()).sort((a, b) => a - b);
+        let value = JSON.parse(localStorage.getItem(`skills_${keys[index]}`));
+        check(value);
+        id.textContent = keys[index];
+      }else{
+        check(new Array(82).fill(0));
+        id.textContent = 0;
+      }
+      id.className = "level";
+      toggle();        
+      // console.log(`Key: ${id.textContent}, Value: ${value}`);
+    }
+
+    if(e.target.id === "prev"){
+      if(levels.size){
+        index = (levels.size + index - 1) % levels.size;
+        let keys = Array.from(levels.keys()).sort((a, b) => a - b);
+        let value = JSON.parse(localStorage.getItem(`skills_${keys[index]}`));
+        check(value);
+        id.textContent = keys[index];
+      }else{
+        check(new Array(82).fill(0));
+        id.textContent = 0;
+      }
+      id.className = "level";
+      toggle();        
+      // console.log(`Key: ${id.textContent}, Value: ${value}`);
+    }
+  });
+
+if(levels.size){
+  let keys = Array.from(levels.keys()).sort((a, b) => a - b);
+  let value = JSON.parse(localStorage.getItem(`skills_${keys[index]}`));
+  check(value);
+  id.textContent = keys[index];
+}
+
+
+function check(value){
+  const db = {"grand": 0};
+  [...document.querySelectorAll(".rank")]
+    .forEach((e, i) => {
+      let cat = e.getAttribute("data-cat"),
+        tier = e.getAttribute("data-tier"),
+        rank = value === undefined ? parseInt(e.textContent) || 0 : value[i];
+      if (!(cat in db)) {
+        db[cat] = {};
+        db[cat][0] = 0;
+        total = 0;
+      }
+      if (!(tier in db[cat])) {
+        db[cat][tier] = total;
+      }
+      db[cat][tier] += rank;
+      total         += rank;
+      db['grand']   += rank;
+      e.className    = rank  >  0 && db[cat][tier-1] < (tier-1)*4 ? "rank error" : "rank";
+      e.textContent  = rank === 0 ? '' : rank;
+    });
+  console.log(db);
+  return db;
+}
+// check();
+
+var jack = {
+  "skills_23":"[1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,2,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,2,1,1,0,0,1,1,0,0,0,2,0,0,0,0]",
+  "skills_41":"[0,0,2,1,0,0,0,0,0,0,0,0,0,0,0,0,2,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1,1,0,1,1,1,0,3,4,0,0,0,0,0,0,0,1,1,4,3,1,0,0,1,1,0,0,0,4,0,1,0,0]",
+  "skills_66":"[0,0,4,1,0,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,0,0,0,0,1,0,0,1,1,1,0,0,4,0,0,0,2,0,0,0,0,2,0,1,1,0,1,0,1,1,1,0,1,1,1,0,3,4,0,0,1,1,0,1,1,2,1,4,3,1,0,0,1,2,0,2,0,4,0,2,0,0]"
+}
+function pageload(){
+  const params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+  });
+  const queryString = params.init; // skills.html?init=jack
+  console.log('init: ', window[queryString]);
+  if(queryString === "jack"){
+    for(const key in window[queryString]){
+      const value = window[queryString][key];
+      // console.log(`Key: ${key}, Value: ${value}`);
+      localStorage.setItem(key, value);
+    }
+  }
+}
+</script></body></head></html>

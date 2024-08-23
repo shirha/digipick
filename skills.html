@@ -207,7 +207,7 @@ function pageload(){
     get: (searchParams, prop) => searchParams.get(prop),
   });
   const queryString = params.init; // skills.html?init=jack
-  console.log('init: ', window[queryString]);
+  console.log('init: ', queryString); // window[queryString]);
   if(queryString === "jack"){
     for(const key in window[queryString]){
       const value = window[queryString][key];
@@ -221,12 +221,14 @@ function pageload(){
     const mat = key.match(regex);
     if(mat){
       levels.add(parseInt(mat[1]));
-      console.log(`Key: ${key}, Value: ${localStorage.getItem(key)}`);
+      // console.log(`Key: ${key}, Value: ${localStorage.getItem(key)}`);
     }
   }
+  let keys = Array.from(levels.keys()).sort((a, b) => a - b);
+  console.log(keys);
 
   if(levels.size){
-    let keys = Array.from(levels.keys()).sort((a, b) => a - b);
+    // let keys = Array.from(levels.keys()).sort((a, b) => a - b);
     let value = JSON.parse(localStorage.getItem(`skills_${keys[index]}`));
     check(value);
     id.textContent = keys[index];

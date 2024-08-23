@@ -27,7 +27,7 @@
   .level {margin-bottom: 20px;}}
   /* https://www.w3schools.com/colors/colors_picker.asp */
 </style>
-<body onload="pageload()">
+<body>
   <button class="level" id="prev">&lt;</button>
   <button class="level" id="key">0</button>
   <button class="level" id="next">&gt;</button>
@@ -202,36 +202,33 @@ var jack = {
   "skills_66":"[0,0,4,1,0,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,0,0,0,0,1,0,0,1,1,1,0,0,4,0,0,0,2,0,0,0,0,2,0,1,1,0,1,0,1,1,1,0,1,1,1,0,3,4,0,0,1,1,0,1,1,2,1,4,3,1,0,0,1,2,0,2,0,4,0,2,0,0]"
 }
 
-function pageload(){
-  const params = new Proxy(new URLSearchParams(window.location.search), {
-    get: (searchParams, prop) => searchParams.get(prop),
-  });
-  const queryString = params.init; // skills.html?init=jack
-  console.log('init:', queryString); // window[queryString]);
-  if(queryString === "jack"){
-    for(const key in window[queryString]){
-      const value = window[queryString][key];
-      // console.log(`Key: ${key}, Value: ${value}`);
-      localStorage.setItem(key, value);
-    }
+const params = new Proxy(new URLSearchParams(window.location.search), {
+  get: (searchParams, prop) => searchParams.get(prop),
+});
+const queryString = params.init; // skills.html?init=jack
+console.log('init:', queryString); // window[queryString]);
+if(queryString === "jack"){
+  for(const key in window[queryString]){
+    const value = window[queryString][key];
+    // console.log(`Key: ${key}, Value: ${value}`);
+    localStorage.setItem(key, value);
   }
+}
 
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    const mat = key.match(/^skills_(\d+)$/);
-    if(mat){
-      levels.add(parseInt(mat[1]));
-      console.log(`Key: ${key}, Value: ${localStorage.getItem(key)}`);
-    }
+for (let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  const mat = key.match(/^skills_(\d+)$/);
+  if(mat){
+    levels.add(parseInt(mat[1]));
+    console.log(`Key: ${key}, Value: ${localStorage.getItem(key)}`);
   }
+}
+
+if(levels.size){
   let keys = Array.from(levels.keys()).sort((a, b) => a - b);
   console.log(keys);
-
-  if(levels.size){
-    // let keys = Array.from(levels.keys()).sort((a, b) => a - b);
-    let value = JSON.parse(localStorage.getItem(`skills_${keys[index]}`));
-    check(value);
-    id.textContent = keys[index];
-  }
+  let value = JSON.parse(localStorage.getItem(`skills_${keys[index]}`));
+  check(value);
+  id.textContent = keys[index];
 }
 </script></body></head></html>

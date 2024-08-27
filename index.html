@@ -60,9 +60,24 @@ document.onpaste = function(pasteEvent) {
     reader.onload = function(e) {
       const img = new Image();
       img.onload = function() {
-        
-        // Draw the image onto the canvas
-        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const aspectRatio = 16 / 9;
+        const desiredHeight = img.height; // e.g., 1440
+        const desiredWidth = desiredHeight * aspectRatio; // Calculate the width to maintain 4:3 aspect ratio
+
+        // Calculate the xOffset to center the cropped area
+        const xOffset = (img.width - desiredWidth) / 2;
+
+        // Draw the cropped image onto the canvas
+        context.drawImage(
+          img,
+          xOffset,  // sx: Start cropping at this x position
+          0,        // sy: Start cropping at the top (y = 0)
+          desiredWidth,  // sWidth: The width of the cropped area
+          desiredHeight, // sHeight: The height of the cropped area
+          0, 0,          // dx, dy: Start drawing at the top-left corner of the canvas
+          canvas.width,   // dWidth: Draw to fit the entire canvas width
+          canvas.height   // dHeight: Draw to fit the entire canvas height
+        );
 
         // init
         sumResult.innerHTML  = '&nbsp;';
@@ -93,9 +108,24 @@ imageInput.addEventListener('change', function (event) {
     reader.onload = function(e) {
       const img = new Image();
       img.onload = function() {
-        
-        // Draw the image onto the canvas
-        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const aspectRatio = 16 / 9;
+        const desiredHeight = img.height; // e.g., 1440
+        const desiredWidth = desiredHeight * aspectRatio; // Calculate the width to maintain 4:3 aspect ratio
+
+        // Calculate the xOffset to center the cropped area
+        const xOffset = (img.width - desiredWidth) / 2;
+
+        // Draw the cropped image onto the canvas
+        context.drawImage(
+          img,
+          xOffset,  // sx: Start cropping at this x position
+          0,        // sy: Start cropping at the top (y = 0)
+          desiredWidth,  // sWidth: The width of the cropped area
+          desiredHeight, // sHeight: The height of the cropped area
+          0, 0,          // dx, dy: Start drawing at the top-left corner of the canvas
+          canvas.width,   // dWidth: Draw to fit the entire canvas width
+          canvas.height   // dHeight: Draw to fit the entire canvas height
+        );
 
         // init
         sumResult.innerHTML  = '&nbsp;';

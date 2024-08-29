@@ -61,17 +61,27 @@ document.onpaste = function(pasteEvent) {
       const img = new Image();
       img.onload = function() {
         const aspectRatio = 16 / 9;
-        const desiredHeight = img.height; // e.g., 1440
-        const desiredWidth = desiredHeight * aspectRatio; // Calculate the width to maintain 4:3 aspect ratio
+        let desiredHeight = img.height, // e.g., 1440
+          desiredWidth = desiredHeight * aspectRatio, // Calculate the width to maintain 4:3 aspect ratio
 
         // Calculate the xOffset to center the cropped area
-        const xOffset = (img.width - desiredWidth) / 2;
+          xOffset = (img.width - desiredWidth) / 2,
+          yOffset = 0;
 
+        if(xOffset < 0){
+          console.log(`Unsupported aspectRatio 16:${(16*img.height/img.width).toFixed(1)}`);
+          desiredWidth = img.width;
+          desiredHeight = desiredWidth / aspectRatio;
+          xOffset = 0;
+          yOffset = (img.height - desiredHeight) / 2;
+        }
+        console.log(`xOffset=${xOffset}, yOffset=${yOffset}, desiredHeight=${desiredHeight}, desiredWidth=${desiredWidth}`);
+      
         // Draw the cropped image onto the canvas
         context.drawImage(
           img,
           xOffset,  // sx: Start cropping at this x position
-          0,        // sy: Start cropping at the top (y = 0)
+          yOffset,        // sy: Start cropping at the top (y = 0)
           desiredWidth,  // sWidth: The width of the cropped area
           desiredHeight, // sHeight: The height of the cropped area
           0, 0,          // dx, dy: Start drawing at the top-left corner of the canvas
@@ -109,17 +119,27 @@ imageInput.addEventListener('change', function (event) {
       const img = new Image();
       img.onload = function() {
         const aspectRatio = 16 / 9;
-        const desiredHeight = img.height; // e.g., 1440
-        const desiredWidth = desiredHeight * aspectRatio; // Calculate the width to maintain 4:3 aspect ratio
+        let desiredHeight = img.height, // e.g., 1440
+          desiredWidth = desiredHeight * aspectRatio, // Calculate the width to maintain 4:3 aspect ratio
 
         // Calculate the xOffset to center the cropped area
-        const xOffset = (img.width - desiredWidth) / 2;
+          xOffset = (img.width - desiredWidth) / 2,
+          yOffset = 0;
 
+        if(xOffset < 0){
+          console.log(`Unsupported aspectRatio 16:${(16*img.height/img.width).toFixed(1)}`);
+          desiredWidth = img.width;
+          desiredHeight = desiredWidth / aspectRatio;
+          xOffset = 0;
+          yOffset = (img.height - desiredHeight) / 2;
+        }
+        console.log(`xOffset=${xOffset}, yOffset=${yOffset}, desiredHeight=${desiredHeight}, desiredWidth=${desiredWidth}`);
+      
         // Draw the cropped image onto the canvas
         context.drawImage(
           img,
           xOffset,  // sx: Start cropping at this x position
-          0,        // sy: Start cropping at the top (y = 0)
+          yOffset,        // sy: Start cropping at the top (y = 0)
           desiredWidth,  // sWidth: The width of the cropped area
           desiredHeight, // sHeight: The height of the cropped area
           0, 0,          // dx, dy: Start drawing at the top-left corner of the canvas

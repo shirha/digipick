@@ -46,6 +46,37 @@ const imageInput = document.getElementById('imageInput');
 const sumResult = document.getElementById('sumResult');
 const routine = document.getElementById('routine');
 
+function clipImage(img){
+  const aspectRatio = 16 / 9;
+  let desiredHeight = img.height, // e.g., 1440
+    desiredWidth = desiredHeight * aspectRatio, // Calculate the width to maintain 4:3 aspect ratio
+
+  // Calculate the xOffset to center the cropped area
+    xOffset = (img.width - desiredWidth) / 2,
+    yOffset = 0;
+
+  if(xOffset < 0){
+    console.log(`Unsupported aspectRatio 16:${(16*img.height/img.width).toFixed(1)}`);
+    desiredWidth = img.width;
+    desiredHeight = desiredWidth / aspectRatio;
+    xOffset = 0;
+    yOffset = (img.height - desiredHeight) / 2;
+  }
+  console.log(`xOffset=${xOffset}, yOffset=${yOffset}, desiredHeight=${desiredHeight}, desiredWidth=${desiredWidth}`);
+
+  // Draw the cropped image onto the canvas
+  context.drawImage(
+    img,
+    xOffset,  // sx: Start cropping at this x position
+    yOffset,        // sy: Start cropping at the top (y = 0)
+    desiredWidth,  // sWidth: The width of the cropped area
+    desiredHeight, // sHeight: The height of the cropped area
+    0, 0,          // dx, dy: Start drawing at the top-left corner of the canvas
+    canvas.width,   // dWidth: Draw to fit the entire canvas width
+    canvas.height   // dHeight: Draw to fit the entire canvas height
+  );
+}
+
 // https://www.techiedelight.com/paste-image-from-clipboard-using-javascript/ 
 document.onpaste = function(pasteEvent) {
   imageInput.value = '';
@@ -60,34 +91,8 @@ document.onpaste = function(pasteEvent) {
     reader.onload = function(e) {
       const img = new Image();
       img.onload = function() {
-        const aspectRatio = 16 / 9;
-        let desiredHeight = img.height, // e.g., 1440
-          desiredWidth = desiredHeight * aspectRatio, // Calculate the width to maintain 4:3 aspect ratio
 
-        // Calculate the xOffset to center the cropped area
-          xOffset = (img.width - desiredWidth) / 2,
-          yOffset = 0;
-
-        if(xOffset < 0){
-          console.log(`Unsupported aspectRatio 16:${(16*img.height/img.width).toFixed(1)}`);
-          desiredWidth = img.width;
-          desiredHeight = desiredWidth / aspectRatio;
-          xOffset = 0;
-          yOffset = (img.height - desiredHeight) / 2;
-        }
-        console.log(`xOffset=${xOffset}, yOffset=${yOffset}, desiredHeight=${desiredHeight}, desiredWidth=${desiredWidth}`);
-      
-        // Draw the cropped image onto the canvas
-        context.drawImage(
-          img,
-          xOffset,  // sx: Start cropping at this x position
-          yOffset,        // sy: Start cropping at the top (y = 0)
-          desiredWidth,  // sWidth: The width of the cropped area
-          desiredHeight, // sHeight: The height of the cropped area
-          0, 0,          // dx, dy: Start drawing at the top-left corner of the canvas
-          canvas.width,   // dWidth: Draw to fit the entire canvas width
-          canvas.height   // dHeight: Draw to fit the entire canvas height
-        );
+        clipImage(img);
 
         // init
         sumResult.innerHTML  = '&nbsp;';
@@ -101,7 +106,6 @@ document.onpaste = function(pasteEvent) {
     };
     reader.readAsDataURL(blob);
   }
-
 }
 
 
@@ -118,35 +122,9 @@ imageInput.addEventListener('change', function (event) {
     reader.onload = function(e) {
       const img = new Image();
       img.onload = function() {
-        const aspectRatio = 16 / 9;
-        let desiredHeight = img.height, // e.g., 1440
-          desiredWidth = desiredHeight * aspectRatio, // Calculate the width to maintain 4:3 aspect ratio
 
-        // Calculate the xOffset to center the cropped area
-          xOffset = (img.width - desiredWidth) / 2,
-          yOffset = 0;
-
-        if(xOffset < 0){
-          console.log(`Unsupported aspectRatio 16:${(16*img.height/img.width).toFixed(1)}`);
-          desiredWidth = img.width;
-          desiredHeight = desiredWidth / aspectRatio;
-          xOffset = 0;
-          yOffset = (img.height - desiredHeight) / 2;
-        }
-        console.log(`xOffset=${xOffset}, yOffset=${yOffset}, desiredHeight=${desiredHeight}, desiredWidth=${desiredWidth}`);
-      
-        // Draw the cropped image onto the canvas
-        context.drawImage(
-          img,
-          xOffset,  // sx: Start cropping at this x position
-          yOffset,        // sy: Start cropping at the top (y = 0)
-          desiredWidth,  // sWidth: The width of the cropped area
-          desiredHeight, // sHeight: The height of the cropped area
-          0, 0,          // dx, dy: Start drawing at the top-left corner of the canvas
-          canvas.width,   // dWidth: Draw to fit the entire canvas width
-          canvas.height   // dHeight: Draw to fit the entire canvas height
-        );
-
+        clipImage(img);
+        
         // init
         sumResult.innerHTML  = '&nbsp;';
         imageInput.classList.add('yellow-text');

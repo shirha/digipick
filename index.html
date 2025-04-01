@@ -77,66 +77,63 @@ function clipImage(img){
   );
 }
 
-// https://www.techiedelight.com/paste-image-from-clipboard-using-javascript/ 
-document.onpaste = function(pasteEvent) {
+// function to load and draw an image onto the canvas from a paste event
+document.onpaste = function(event) {
   imageInput.value = '';
+  sumResult.innerHTML = '&nbsp;';
+  document.getElementById('warning').style.display = 'inline';
+  context.clearRect(0, 0, canvas.width, canvas.height);
 
-  // consider the first item (can be easily extended for multiple items)
-  const item = pasteEvent.clipboardData.items[0]; // DataTransferItem
-
+  const item = event.clipboardData.items[0];
   if (item.type.indexOf("image") === 0) {
-    const blob = item.getAsFile();
 
     const reader = new FileReader();
     reader.onload = function(e) {
+
       const img = new Image();
       img.onload = function() {
 
         clipImage(img);
 
         // init
-        sumResult.innerHTML  = '&nbsp;';
         imageInput.classList.add('yellow-text');
         document.getElementById('warning').style.display = 'none';
         initLockData();
-
       };
       img.src = e.target.result;
-      // document.getElementById("container").src = event.target.result;
     };
-    reader.readAsDataURL(blob);
+    reader.readAsDataURL(item.getAsFile());
   }
-}
+};
 
+// Function to load and draw an image onto the canvas from an input element
+imageInput.onchange = function(event) {
 
-// Add an event listener to the input element to load the image
-// Function to load and draw an image onto the canvas
-imageInput.addEventListener('change', function (event) {
+  sumResult.innerHTML = '&nbsp;';
+  document.getElementById('warning').style.display = 'inline';
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
   const file = event.target.files[0];
-  if (file) {
-
-    // Clear the canvas
-    context.clearRect(0, 0, canvas.width, canvas.height);
+  if (file.type.indexOf("image") === 0) {
 
     const reader = new FileReader();
     reader.onload = function(e) {
+
       const img = new Image();
       img.onload = function() {
 
         clipImage(img);
-        
+
         // init
-        sumResult.innerHTML  = '&nbsp;';
         imageInput.classList.add('yellow-text');
         document.getElementById('warning').style.display = 'none';
         initLockData();
-
       };
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
-});
+};
 
 // Function to sum the values of a 7x7 square surrounding a point
 function sumSurroundingSquare(context, x, y, size) {

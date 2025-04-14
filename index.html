@@ -32,7 +32,7 @@
       <input type="button" id="imagePaste" value="Paste Clipboard" />
       <input type="file" id="imageInput" accept="image/*"><br>
       <label id="label"><span id=l><b>New<i>!</i></b></span>&nbsp; Paste image (Ctrl-V or Shift-Insert)</label>
-      <input type="checkbox" id="routine">
+      <input type="checkbox" id="routine" checked>
       <p id="sumResult"></p>
       <img id="warning" src="warning2.jpg">
     </div>
@@ -289,8 +289,69 @@ function initLockData() {
   lockSums.forEach(ring => lockRings.push(ring.key));
   lockRings.length = {0:0, 4:2, 6:2, 9:3, 12:4}[pickRings.length];
 
+  // note: lock/pick 0 start at 3 o'clock (45°)
   console.log('\n pick=',JSON.stringify(pickRings));
   console.log('lock=',JSON.stringify(lockRings));
+
+  function solveLock_grok3(pickRings, lockRings, pickIndex = 0, rotateIndex = 0) { count++;
+      // Base case: no solution at this branch
+      if (pickIndex >= pickRings.length && rotateIndex >= 16) {
+          return null;
+      }
+
+      const currentPickRing = pickRings[pickIndex];
+
+      // Try each lock ring
+      for (let i = 0; i < lockRings.length; i++) {
+          const currentLockRing = lockRings[i];
+          const rotatePickRing = currentPickRing.map(key => (key + rotateIndex) % 16);
+
+          // Check if rotated pick ring matches lock ring
+          if (rotatePickRing.length && rotatePickRing.every(key => currentLockRing.includes(key))) {
+              // Apply the pick
+              const newLockRings = lockRings.map((ring, idx) => 
+                  idx === i ? ring.filter(key => !rotatePickRing.includes(key)) : ring
+              );
+              const move = { lock: i, pick: pickIndex, rotate: rotateIndex, key: rotatePickRing };
+
+              // Check if solved
+              if (newLockRings.every(ring => ring.length === 0)) {
+                  return {
+                      solution: [move],
+                      lockRings: newLockRings,
+                      pickRings: pickRings
+                  };
+              }
+
+              // Recurse to next pick
+              if (pickIndex + 1 < pickRings.length) {
+                  const result = solveLock_grok3(pickRings, newLockRings, pickIndex + 1, 0);
+                  if (result) {
+                      return {
+                          solution: [move, ...result.solution],
+                          lockRings: result.lockRings,
+                          pickRings: result.pickRings
+                      };
+                  }
+              }
+          }
+      }
+
+      // Try next rotation
+      if (rotateIndex + 1 < 16) {
+          const result = solveLock_grok3(pickRings, lockRings, pickIndex, rotateIndex + 1);
+          if (result) {
+              return result;
+          }
+      } else if (pickIndex + 1 < pickRings.length) {
+          const result = solveLock_grok3(pickRings, lockRings, pickIndex + 1, 0);
+          if (result) {
+              return result;
+          }
+      }
+
+      return null;
+  }
 
   // Start the timer
   let startTime = performance.now();
@@ -298,11 +359,33 @@ function initLockData() {
   // throw ""
   if(routine.checked == true)  {
 
-    try {
-      solveLock(0, 0);
-    } catch(err){
-      console.log(err);
-    }
+    // Example usage with your data
+    // const pickRings = [[4, 10], [10, 12, 14], [0, 4], [10, 12, 13]];
+    // const lockRings = [[3, 5, 7, 15], [6, 8, 9, 10, 12, 14]];
+    // const result = solveLock_grok3(pickRings, lockRings);
+    // if (result) {
+    //     console.log("Solution:", JSON.stringify(result.solution, null, 2));
+    //     console.log("Final Lock Rings:", JSON.stringify(result.lockRings));
+    //     console.log("Pick Rings:", JSON.stringify(result.pickRings));
+    // } else {
+    //     console.log("No solution");
+    // }
+    console.log("grok3");
+    const result = solveLock_grok3(pickRings, lockRings);
+    if (result) {
+      solution  = result.solution;
+      lockRings = result.lockRings;
+      pickRings = result.pickRings;
+    } else {
+      console.log("No solution");
+    } 
+
+
+    // try {
+    //   solveLock(0, 0);
+    // } catch(err){
+    //   console.log(err);
+    // }
 
   }else{
 
@@ -332,7 +415,7 @@ function initLockData() {
   let elapsed = (performance.now() - startTime).toFixed(1);
   console.log(`solveLock took ${elapsed} milliseconds`);
 
-  console.log(`\ncount: ${count}\nsolution: `);
+  console.log(`\nlock/pick 0 start at 3 o'clock (45°), translated on page\ncount: ${count}\nsolution: `);
   for(let i = 0; i < solution.length; i++){
     console.log(' ',JSON.stringify(solution[i]));
   }

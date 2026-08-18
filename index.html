@@ -265,11 +265,11 @@ function initLockData() {
   lockRadius.forEach((radius, index) => lockSums[index] = 
     analyze(lockX, lockY, radius, context, e => e.pct < 75));
 
-  const gap = findLargestDifference(totalPct.sort((a, b) => a-b));
+  // const gap = findLargestDifference(totalPct.sort((a, b) => a-b));
   if(warning[0] < 10){
     // const gap = findLargestDifference(totalPct.sort((a, b) => a-b));
-    sumResult.innerHTML = `gap: ${gap}, cir: ${warning[0]}, digi: ${warning[1]} ` +
-      `<br><br><span id=w>WARNING: Lock not found!</span><br><br>`;
+    // sumResult.innerHTML = `gap: ${gap}, cir: ${warning[0]}, digi: ${warning[1]} ` +
+    //   `<br><br><span id=w>WARNING: Lock not found!</span><br><br>`;
   }
   // console.log(JSON.stringify({radius, solutionX, centerX, offset, lockRadius, lockSums, pickSums, lockX, lockY, lockC, digiX, digiY, centerY, warning, gap},null,2));
 

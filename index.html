@@ -285,7 +285,7 @@ function initLockData() {
 
   let pts = pointsBox(centerX, centerY, offset);
   pts.forEach((pt, index) => pickSums[index] = 
-    analyze(pt.x, pt.y, radius, context, e => e.sum > 12000));
+    analyze(pt.x, pt.y, radius, context, e => e.sum > 12000)); // sjh 256 white * 3 rgb * 4x4 square=12288; 288/48=6
 
   console.log('\npickSums:');
   for(let i = 0; i < pickSums.length; i++){

@@ -5,9 +5,9 @@ Here is my 'Starfield Digipick Solver'. It's working on my 1920 x 1080 fullscree
 
 Just be carefull to keep the cursor away from tne places on the screen I'm looking at, like around the digipicks keys and the lock empty slots. I put mine in the center of the lock or the edges. See warning2.jpg
 
-**Important!** 99% of the puzzles are solved in less than a secound but I have come across one [Master Lock](https://raw.githubusercontent.com/shirha/digipick/main/1_min_Master_Lock.png) that took almost a minute!
+99% of the puzzles are solved in less than a secound but I have come across one [Master Lock](https://raw.githubusercontent.com/shirha/digipick/main/1_min_Master_Lock.png) that took almost a minute!
 
-**WARNING** Try to keep [light off of the tumblers](https://raw.githubusercontent.com/shirha/digipick/main/light_on_lock.jpg)!
+**WARNING:** Try to keep [light off of the tumblers](https://raw.githubusercontent.com/shirha/digipick/main/light_on_lock.jpg)!
 
 <!--
 **note:** In the solved-master-lock.jpg, `n` is the number of recursive calls to `solveLock2()` and elapse runtime is in `ms`.

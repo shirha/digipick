@@ -7,9 +7,11 @@ Just be carefull to keep the cursor away from tne places on the screen I'm looki
 
 99% of the puzzles are solved in less than a secound but I have come across one [Master Lock](https://raw.githubusercontent.com/shirha/digipick/main/1_min_Master_Lock.png) that took almost a minute!
 
-**WARNING:** Try to keep [light off of the tumblers](https://raw.githubusercontent.com/shirha/digipick/main/light_on_lock.jpg)!
 
 <!--
+**WARNING:** Try to keep [light off of the tumblers](https://raw.githubusercontent.com/shirha/digipick/main/light_on_lock.jpg)!
+
+
 **note:** In the solved-master-lock.jpg, `n` is the number of recursive calls to `solveLock2()` and elapse runtime is in `ms`.
 
 `solveLock2()` was an attempt to speed up the original `solveLock()` and it did decrease the number of recursive calls, but it was a disappointment in the reduction of runtime. You get the old solver by clicking the checkbox. 

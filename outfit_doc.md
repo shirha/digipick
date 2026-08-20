@@ -1,4 +1,4 @@
-|'         '| ***I printed all the families = 'large', 'char' = '0' from full_matches but I don't see why log output has an ending score of 0.7864705324172974 for:*** |
+***I printed all the families = 'large', 'char' = '0' from full_matches but I don't see why log output has an ending score of 0.7864705324172974 for:***
 
 ***=== large / '0'  (9 unique) ===
 Best score tuple: (1.0, 0.999994695186615, 0.9561156630516052, 0.9559755325317383, 0.9400924444198608, 0.9397987127304077, 0.8177118301391602, 0.817671000957489, 0.7864705324172974)***
@@ -50,7 +50,7 @@ You will see that every candidate’s tuple ends with a relatively low number; t
 
 If you want to be stricter you can later filter out patches whose lowest cross-similarity falls below a threshold (e.g. 0.90), but with the current design the 0.786 is expected and correct.
 
-<p style="background-color: yellow; width: fit-content;">my concern is that my original match for large 0 are all above .9. Does mean my new_digits.png has a worst template now?</p>
+***my concern is that my original match for large 0 are all above .9. Does mean my new_digits.png has a worst template now?***
 
 **No – a 0.786 in the cross-match tuple does not mean your new template is worse.**
 

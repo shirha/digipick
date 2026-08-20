@@ -1,4 +1,4 @@
-***I printed all the families = 'large', 'char' = '0' from full_matches but I don't see why log output has an ending score of 0.7864705324172974 for:***
+|'         '| ***I printed all the families = 'large', 'char' = '0' from full_matches but I don't see why log output has an ending score of 0.7864705324172974 for:*** |
 
 ***=== large / '0'  (9 unique) ===
 Best score tuple: (1.0, 0.999994695186615, 0.9561156630516052, 0.9559755325317383, 0.9400924444198608, 0.9397987127304077, 0.8177118301391602, 0.817671000957489, 0.7864705324172974)***
